@@ -18,9 +18,9 @@ const onRequest = (request, response) => {
       case '/style.css':
         htmlHandler.getCSS(request, response);
         break;
-      case '/getUsers':
+      /* case '/getUsers':
         jsonHandler.getUsers(request, response);
-        break;
+        break; */
       case '/notReal':
         jsonHandler.getNotReal(request, response);
         break;
@@ -28,18 +28,17 @@ const onRequest = (request, response) => {
         jsonHandler.getNotReal(request, response);
         break;
     }
-  } else if (parsedUrl.pathname === '/getUsers' && request.method === 'HEAD') {
-    jsonHandler.getUsersHead(request, response);
   } else if (parsedUrl.pathname === '/notReal' && request.method === 'HEAD') {
     jsonHandler.getNotRealHead(request, response);
-  } else if (parsedUrl.pathname === '/addUser' && request.method === 'POST') {
+  } else if (parsedUrl.pathname === '/postMessage' && request.method === 'POST') {
     // Also pass in the parsed URL for queries
-    jsonHandler.getAddUser(request, response, query.parse(parsedUrl.query));
+    jsonHandler.getMessage(request, response, query.parse(parsedUrl.query));
   } else {
     jsonHandler.getNotReal(request, response);
   }
+  /* else if (parsedUrl.pathname === '/postMessage' && request.method === 'HEAD') {
+    jsonHandler.getUsersHead(request, response);
+  } */ 
 };
 
 http.createServer(onRequest).listen(port);
-
-console.log(`Listening on 127.0.0.1: ${port}`);

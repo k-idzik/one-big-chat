@@ -35,29 +35,29 @@ const respondJSONHead = (request, response, status) => {
   response.end();
 };
 
-// getUsers GET
-const getUsers = (request, response) => {
-  const JSONResponse = {
-    users,
-  };
-
-  // Client etag, checks if anything has changed
-  if (request.headers['if-none-match'] === digest) {
-    return respondJSONHead(request, response, 304); // 304, already have file
-  }
-
-  return respondJSON(request, response, 200, JSONResponse); // 200
-};
-
-// getUsers HEAD
-const getUsersHead = (request, response) => {
-  // Client etag, checks if anything has changed
-  if (request.headers['if-none-match'] === digest) {
-    return respondJSONHead(request, response, 304); // 304, already have file
-  }
-
-  return respondJSONHead(request, response, 200); // 200
-};
+// // getUsers GET
+// const getUsers = (request, response) => {
+//  const JSONResponse = {
+//    users,
+//  };
+//
+//  // Client etag, checks if anything has changed
+//  if (request.headers['if-none-match'] === digest) {
+//    return respondJSONHead(request, response, 304); // 304, already have file
+//  }
+//
+//  return respondJSON(request, response, 200, JSONResponse); // 200
+// };
+//
+// // getUsers HEAD
+// const getUsersHead = (request, response) => {
+//  // Client etag, checks if anything has changed
+//  if (request.headers['if-none-match'] === digest) {
+//    return respondJSONHead(request, response, 304); // 304, already have file
+//  }
+//
+//  return respondJSONHead(request, response, 200); // 200
+// };
 
 // notReal GET
 const getNotReal = (request, response) => {
@@ -75,31 +75,32 @@ const getNotRealHead = (request, response) => {
   respondJSONHead(request, response, 404);
 };
 
-// addUser POST
-const getAddUser = (request, response, params) => {
-  // Make a new user
-  const newUser = {
-    name: params.name,
-    age: params.age,
-  };
-
+// postMessage POST
+const getMessage = (request, response, params) => {
   const JSONResponse = {
-    message: 'Message: Created Successfully',
+    username: params.name,
+    message: params.message,
   };
 
   // Invalid parameters
-  if (!params.name || !params.age) {
+  if (!params.name) {
     JSONResponse.id = 'badRequest';
-    JSONResponse.message = 'Message: Name and age are both required.';
+    JSONResponse.message = 'You must have a Username!';
+    return respondJSON(request, response, 400, JSONResponse);
+  } else if (!params.message) {
+    JSONResponse.id = 'badRequest';
+    JSONResponse.message = 'You need to have a message to post!';
     return respondJSON(request, response, 400, JSONResponse);
   }
 
-  // User already exists
-  if (users[newUser.name]) {
-    return respondJSONHead(request, response, 204); // 204
-  }
+  // // User already exists
+  // if (users[params.name]) {
+  //  return respondJSONHead(request, response, 204); // 204
+  // }
 
-  users[newUser.name] = newUser; // Add the user, indexes by the user's name
+  if (!users[params.name]) {
+    users[params.name] = params.name; // Add the user, indexes by the user's name
+  }
 
   etag = crypto.createHash('sha1').update(JSON.stringify(users)); // Create a new hash object
   digest = etag.digest('hex'); // Recalculate the hash digest for the etag
@@ -108,9 +109,9 @@ const getAddUser = (request, response, params) => {
 };
 
 module.exports = {
-  getUsers,
-  getUsersHead,
+  // getUsers,
+  // getUsersHead,
   getNotReal,
   getNotRealHead,
-  getAddUser,
+  getMessage,
 };

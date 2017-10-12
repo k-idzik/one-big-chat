@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Our simple HTTP server</title>
+  <title>One Big Chat</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
     const handleResponses = (xhr, parseResponse) => {
         const content = document.querySelector('#content');
         
-        switch(xhr.status) {
+       /*switch(xhr.status) {
             case 200: //200 Success
               content.innerHTML = `<b>Success</b>`;
               break;
@@ -31,16 +32,16 @@
             default:
               content.innerHTML = `Error code not implemented by client.`;
               break;
-      }
+      }*/
         
       //If we are expecting a response from a GET or POST
       if (parseResponse) {
           if (xhr.status === 200)
             content.innerHTML += `<p>${xhr.response}</p>`;
+          else if (xhr.status === 201)
+            content.innerHTML += `<div id="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div>`;
           else
             content.innerHTML += `<p>${JSON.parse(xhr.response).message}</p>`;
-          
-          console.dir(JSON.parse(xhr.response));
       }
     };
 
@@ -48,18 +49,18 @@
       let method = form.method; //Get the method type
       let url = form.action; //Get the type of action from the url
 
-      if (form.id === 'userForm') {
-          //GET or HEAD
-          //Since this is fetching data, update with the correct information
-          method = document.querySelector('#methodSelect').value;
-          url = document.querySelector('#urlField').value;
-      }
-      else {
+      //if (form.id === 'userForm') {
+      //    //GET or HEAD
+      //    //Since this is fetching data, update with the correct information
+      //    method = document.querySelector('#methodSelect').value;
+      //    url = document.querySelector('#urlField').value;
+      //}
+      //else {
           //POST
           //Append the information from the forms to the URL object
           url += `?name=${document.querySelector('#nameField').value}`;
-          url += `&age=${document.querySelector('#ageField').value}`;
-      }
+          url += `&message=${document.querySelector('#messageField').value}`;
+      //}
 
       const xhr = new XMLHttpRequest(); //AJAX request
 
@@ -84,42 +85,30 @@
 
     const init = () => {
         //Get forms
-        const nameForm = document.querySelector('#nameForm');
-        const userForm = document.querySelector('#userForm');
+        const messageForm = document.querySelector('#messageForm');
         
-        const addUsers = (e) => requestUpdate(e, nameForm); //Handles requests to add users
-        const getUsers = (e) => requestUpdate(e, userForm); //Handles requests to get users
+        const postMessage = (e) => requestUpdate(e, messageForm); //Handles requests to add users
         
-        nameForm.addEventListener('submit', addUsers); //Listen for when the form is submitted
-        userForm.addEventListener('submit', getUsers); //Listen for when the form is submitted
+        messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted
     };
 
-window.onload = init;
+    window.onload = init;
   </script>
 </head>
 <body>
-  <section id="top">
-    <h3>POST Status Code Tests</h3>
-    <form id="nameForm" action="/addUser" method="post">
-      <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/>
-      <input type="submit" value="Add User" />
-    </form>
-    <form id="userForm" action="/getUsers" method="get">
-      <select id='urlField'>
-        <option value='/getUsers'>/getUsers</option>
-        <option value='/notReal'>/notReal</option>
-      </select>
-      <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Get User" />
-    </form>
+  <section id="header">
+    <h1>One Big Chat</h1>
   </section>
+    
   <section id="content">
+  </section>
+    
+  <section id="footer">
+    <form id="messageForm" action="/postMessage" method="post">
+      <input id="nameField" type="text" placeholder="Username" name="name" />
+      <input id="messageField" type="text" placeholder="Message" name="message" />
+      <input type="submit" value="Post" />
+    </form>
   </section>
 </body>
 </html>

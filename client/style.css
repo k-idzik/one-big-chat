@@ -13,7 +13,7 @@ html, body {
 #footer {
   background-color: green;
   bottom: 0;
-  height: 5%;
+  height: 50px;
   margin: auto;
   position: fixed;
   text-align: center;
@@ -35,7 +35,15 @@ html, body {
   font-size: 16px;
 }
 #messageField {
-  font-size: 16px;
-  transform: translateY(20%);
+  font-size: 20px;
+  transform: translateY(35%);
   width: 90%;
+}
+#nameField {
+  font-size: 20px;
+  transform: translateY(35%);
+  width: 8%;
+}
+#submit {
+    display: none;
 }

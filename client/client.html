@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
     const handleResponses = (xhr, parseResponse) => {
-        const content = document.querySelector('#content');
+        const scrollWrapper = document.querySelector('#scrollWrapper');
         
        /*switch(xhr.status) {
             case 200: //200 Success
@@ -37,11 +37,12 @@
       //If we are expecting a response from a GET or POST
       if (parseResponse) {
           if (xhr.status === 200)
-            content.innerHTML += `<p>${xhr.response}</p>`;
+            scrollWrapper.innerHTML += `<p>${xhr.response}</p>`;
           else if (xhr.status === 201)
-            content.innerHTML += `<div id="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div>`;
+            scrollWrapper.innerHTML += `<div id="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div>`;
+            //scrollWrapper.innerHTML = `<div id="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div>` + scrollWrapper.innerHTML;
           else
-            content.innerHTML += `<p>${JSON.parse(xhr.response).message}</p>`;
+            scrollWrapper.innerHTML += `<p>${JSON.parse(xhr.response).message}</p>`;
       }
     };
 
@@ -84,12 +85,16 @@
     };
 
     const init = () => {
+        //Change the height of the message area to fit within the screen height
+        document.querySelector('#scrollWrapper').style.height = `${window.innerHeight - 125}px`;
+        
         //Get forms
         const messageForm = document.querySelector('#messageForm');
         
         const postMessage = (e) => requestUpdate(e, messageForm); //Handles requests to add users
         
         messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted
+        console.log(document.querySelector('#scrollWrapper').style.height);
     };
 
     window.onload = init;
@@ -100,7 +105,7 @@
     <h1>One Big Chat</h1>
   </section>
     
-  <section id="content">
+  <section id="scrollWrapper">
   </section>
     
   <section id="footer">

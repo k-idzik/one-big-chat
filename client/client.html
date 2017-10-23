@@ -105,7 +105,7 @@
       xhr.onload = () => handleResponses(xhr, true); //Parse the GET request and get the JSON message
       
       xhr.send(); //Send the AJAX request
-      
+      console.log("hgere");
       //e.preventDefault(); //Cancel the browser's default action
     
       return false; //Stop the page from redirecting from the form
@@ -127,11 +127,11 @@
         
         const postMessage = (e) => requestUpdate(e, messageForm); //Handles requests to add users
         
-        messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted
+        messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted        
         
-        setInterval(updateChat(), 1000); //Check for other user updates
+        setInterval(updateChat, 1000); //Check for other user updates
     };
-
+    
     window.onload = init;
   </script>
 </head>

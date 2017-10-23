@@ -44,6 +44,7 @@
 
       //If we are expecting a response from a GET or POST
       if (parseResponse && xhr.status === 200) {
+        //Update if just joining chat or with messages from other users
         const count = JSON.parse(xhr.response).indexer;
           
         if (count > 0 && count > messageCount) {
@@ -57,10 +58,10 @@
                 else
                   messageFlipper = 0;
             }
+            
+            messageCount = count;
+            scrollWrapper.innerHTML += `<div id="spacer"></div>`;
         }
-        
-        messageCount = count;
-        scrollWrapper.innerHTML += `<div id="spacer"></div>`;
       }
       else if (parseResponse && xhr.status === 201) {
         const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
@@ -70,9 +71,9 @@
           messageFlipper = 1;
         else
           messageFlipper = 0;
+          
+        spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
       }
-        
-      spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
     };
 
     const requestUpdate = (e, form) => {
@@ -86,6 +87,7 @@
           url += `&message=${document.querySelector('#messageField').value}`;
           
           messageCount++; //Increment the message count
+          document.querySelector('#messageField').value = ''; //Clear the message field
       }
 
       const xhr = new XMLHttpRequest(); //AJAX request

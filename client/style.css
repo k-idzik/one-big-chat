@@ -25,11 +25,12 @@ html, body {
   top: 0;
   width: 100%;
 }
-#messageContainer {
+.messageContainer {
   background-color: blue;
   bottom: 0;
   font-size: 16px;
-  position: absolute;
+  height: 70px;
+  position: relative;
   width: 100%;
 }
 #messageField {
@@ -52,6 +53,10 @@ html, body {
   vertical-align: baseline;
   width: 100%;
   z-index: -1;
+}
+#spacer {
+    height: 0px;
+    visibility: hidden;
 }
 #submit {
     display: none;

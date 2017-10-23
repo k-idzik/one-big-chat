@@ -10,6 +10,10 @@
     const handleResponses = (xhr, parseResponse) => {
         const scrollWrapper = document.querySelector('#scrollWrapper');
         
+        //Get and remove the spacer
+        let spacer = document.querySelector('#spacer');
+        spacer.parentNode.removeChild(spacer);
+        
        /*switch(xhr.status) {
             case 200: //200 Success
               content.innerHTML = `<b>Success</b>`;
@@ -37,13 +41,15 @@
       //If we are expecting a response from a GET or POST
       if (parseResponse) {
           if (xhr.status === 200)
-            scrollWrapper.innerHTML += `<p>${xhr.response}</p>`;
+            scrollWrapper.innerHTML += `<p>${xhr.response}</p><div id="spacer" height="0"></div>`;
           else if (xhr.status === 201)
-            scrollWrapper.innerHTML += `<div id="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div>`;
+            scrollWrapper.innerHTML += `<div class="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
             //scrollWrapper.innerHTML = `<div id="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div>` + scrollWrapper.innerHTML;
           else
-            scrollWrapper.innerHTML += `<p>${JSON.parse(xhr.response).message}</p>`;
+            scrollWrapper.innerHTML += `<p>${JSON.parse(xhr.response).message}</p><div id="spacer" height="0"></div>`;
       }
+      
+      spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
     };
 
     const requestUpdate = (e, form) => {
@@ -84,9 +90,16 @@
       return false; //Stop the page from redirecting from the form
     };
 
+    const resizeScrollArea = (scrollArea) => {
+        scrollArea.style.height = `${window.innerHeight - 125}px`; //Resize window
+    }
+
     const init = () => {
         //Change the height of the message area to fit within the screen height
-        document.querySelector('#scrollWrapper').style.height = `${window.innerHeight - 125}px`;
+        //Change value on resize
+        const scrollArea = document.querySelector('#scrollWrapper');
+        resizeScrollArea(scrollArea);
+        window.onresize = () => resizeScrollArea(scrollArea);        
         
         //Get forms
         const messageForm = document.querySelector('#messageForm');
@@ -94,7 +107,6 @@
         const postMessage = (e) => requestUpdate(e, messageForm); //Handles requests to add users
         
         messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted
-        console.log(document.querySelector('#scrollWrapper').style.height);
     };
 
     window.onload = init;
@@ -105,8 +117,9 @@
     <h1>One Big Chat</h1>
   </section>
     
-  <section id="scrollWrapper">
-  </section>
+  <div id="scrollWrapper">
+    <div id="spacer"></div>
+  </div>
     
   <section id="footer">
     <form id="messageForm" action="/postMessage" method="post">

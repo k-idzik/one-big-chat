@@ -10,57 +10,50 @@
     let messageFlipper = 0;
 
     const handleResponses = (xhr, parseResponse) => {
-        const scrollWrapper = document.querySelector('#scrollWrapper');
+      const scrollWrapper = document.querySelector('#scrollWrapper');
         
-        //Get and remove the spacer
-        let spacer = document.querySelector('#spacer');
-        spacer.parentNode.removeChild(spacer);
+      //Get and remove the spacer
+      let spacer = document.querySelector('#spacer');
+      spacer.parentNode.removeChild(spacer);
         
-       switch(xhr.status) {
-            case 200: //200 Success
-              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Success</b></div>`;
-              break;
-            case 201: //201 Created
-              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Create</b></div>`;
-              break;
-            case 204: //204 Updated
-              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Updated (No Content)</b></div>`;
-              return;
-            case 304: //304 Not Modified
-              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Not Modified</b></div>`;
-              break;
-            case 400: //400 Bad Request
-              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Bad Request</b></div>`;
-              break;
-            case 404: //404 Not Found
-              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Resource Not Found</b></div>`;
-              break;
-            default:
-              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Error code not implemented by client.</b></div>`;
-              break;
+      switch(xhr.status) {
+        case 200: //200 Success
+          //spacer.innerHTML = `<div id="spacer"><b>Success</b></div>`;
+          break;
+        case 201: //201 Created
+          //spacer.innerHTML = `<div id="spacer"><b>Create</b></div>`;
+          break;
+        case 204: //204 Updated
+          spacer.innerHTML = `<div id="spacer"><b>Updated (No Content)</b></div>`;
+          return;
+        case 304: //304 Not Modified
+          spacer.innerHTML = `<div id="spacer"><b>Not Modified</b></div>`;
+          break;
+        case 400: //400 Bad Request
+          spacer.innerHTML = `<div id="spacer"><b>Bad Request</b></div>`;
+          break;
+        case 404: //404 Not Found
+          spacer.innerHTML = `<div id="spacer"><b>Resource Not Found</b></div>`;
+          break;
+        default:
+          spacer.innerHTML = `<div id="spacer"><b>Error code not implemented by client.</b></div>`;
+          break;
       }
-        
+
       //If we are expecting a response from a GET or POST
-      if (parseResponse) {
-          if (xhr.status === 200) {
-            scrollWrapper.innerHTML += `<div id="spacer"><b>${xhr.response}</b></div>`;
-            spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
-          }
-          else if (xhr.status === 201) {
-            const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
-            scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
-            spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
-              
-            if (messageFlipper === 0)
-              messageFlipper = 1;
-            else
-              messageFlipper = 0;
-          }
-          else {
-            scrollWrapper.innerHTML += `<div id="spacer"><b>${JSON.parse(xhr.response).message}</b></div>`; //Alert errors in spacer
-            spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
-          }
+      if (parseResponse && xhr.status === 200)
+        scrollWrapper.innerHTML += `<div id="spacer"></div>`;
+      else if (parseResponse && xhr.status === 201) {
+        const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
+        scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
+
+        if (messageFlipper === 0)
+          messageFlipper = 1;
+        else
+          messageFlipper = 0;
       }
+        
+      spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
     };
 
     const requestUpdate = (e, form) => {
@@ -113,7 +106,7 @@
       
       xhr.send(); //Send the AJAX request
       
-      e.preventDefault(); //Cancel the browser's default action
+      //e.preventDefault(); //Cancel the browser's default action
     
       return false; //Stop the page from redirecting from the form
     };

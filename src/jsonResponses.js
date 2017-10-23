@@ -4,7 +4,7 @@ const crypto = require('crypto');
 // Users object, stored in memory
 // Also contains the user's messages
 const users = {};
-let indexer= 0; //Indexer for the users object
+let indexer = 0; // Indexer for the users object
 
 // SHA-1 is a bit of a quicker hash algorithm for insecure things
 let etag = crypto.createHash('sha1').update(JSON.stringify(users));
@@ -100,9 +100,11 @@ const postMessage = (request, response, params) => {
   //  return respondJSONHead(request, response, 204); // 204
   // }
 
-  users[indexer].username = params.name; // Add the user's name
-  users[indexer].message = params.message; // Add the user's message
-  indexer++; //Increment the indexer
+  users[indexer] = {
+    name: params.name, // Add the user's name
+    message: params.message, // Add the user's message
+  };
+  indexer++; // Increment the indexer
 
   etag = crypto.createHash('sha1').update(JSON.stringify(users)); // Create a new hash object
   digest = etag.digest('hex'); // Recalculate the hash digest for the etag

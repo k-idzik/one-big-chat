@@ -7,6 +7,8 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
+    let messageFlipper = 0;
+
     const handleResponses = (xhr, parseResponse) => {
         const scrollWrapper = document.querySelector('#scrollWrapper');
         
@@ -40,16 +42,25 @@
         
       //If we are expecting a response from a GET or POST
       if (parseResponse) {
-          if (xhr.status === 200)
-            scrollWrapper.innerHTML += `<p>${xhr.response}</p><div id="spacer" height="0"></div>`;
-          else if (xhr.status === 201)
-            scrollWrapper.innerHTML += `<div class="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
-            //scrollWrapper.innerHTML = `<div id="messageContainer"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div>` + scrollWrapper.innerHTML;
-          else
-            scrollWrapper.innerHTML += `<p>${JSON.parse(xhr.response).message}</p><div id="spacer" height="0"></div>`;
+          if (xhr.status === 200) {
+            scrollWrapper.innerHTML += `<div id="spacer"><b>${xhr.response}</b></div>`;
+            spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
+          }
+          else if (xhr.status === 201) {
+            const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
+            scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
+            spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
+              
+            if (messageFlipper === 0)
+              messageFlipper = 1;
+            else
+              messageFlipper = 0;
+          }
+          else {
+            scrollWrapper.innerHTML += `<div id="spacer"><b>${JSON.parse(xhr.response).message}</b></div>`; //Alert errors in spacer
+            spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
+          }
       }
-      
-      spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
     };
 
     const requestUpdate = (e, form) => {

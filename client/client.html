@@ -27,18 +27,23 @@
           break;
         case 204: //204 Updated
           spacer.innerHTML = `<div id="spacer"><b>Updated (No Content)</b></div>`;
+          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
           return;
         case 304: //304 Not Modified
           spacer.innerHTML = `<div id="spacer"><b>Not Modified</b></div>`;
+          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
           break;
         case 400: //400 Bad Request
           spacer.innerHTML = `<div id="spacer"><b>Bad Request</b></div>`;
+          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
           break;
         case 404: //404 Not Found
           spacer.innerHTML = `<div id="spacer"><b>Resource Not Found</b></div>`;
+          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
           break;
         default:
           spacer.innerHTML = `<div id="spacer"><b>Error code not implemented by client.</b></div>`;
+          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
           break;
       }
 
@@ -60,8 +65,9 @@
             }
             
             messageCount = count;
-            scrollWrapper.innerHTML += `<div id="spacer"></div>`;
         }
+        
+        scrollWrapper.innerHTML += `<div id="spacer"></div>`;
       }
       else if (parseResponse && xhr.status === 201) {
         const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change

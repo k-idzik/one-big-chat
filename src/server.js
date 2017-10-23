@@ -18,9 +18,9 @@ const onRequest = (request, response) => {
       case '/style.css':
         htmlHandler.getCSS(request, response);
         break;
-      /* case '/getUsers':
-        jsonHandler.getUsers(request, response);
-        break; */
+      case '/getMessages':
+        jsonHandler.getMessages(request, response);
+        break;
       case '/notReal':
         jsonHandler.getNotReal(request, response);
         break;
@@ -32,7 +32,7 @@ const onRequest = (request, response) => {
     jsonHandler.getNotRealHead(request, response);
   } else if (parsedUrl.pathname === '/postMessage' && request.method === 'POST') {
     // Also pass in the parsed URL for queries
-    jsonHandler.getMessage(request, response, query.parse(parsedUrl.query));
+    jsonHandler.postMessage(request, response, query.parse(parsedUrl.query));
   } else {
     jsonHandler.getNotReal(request, response);
   }

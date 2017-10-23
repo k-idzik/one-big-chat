@@ -2,7 +2,9 @@
 const crypto = require('crypto');
 
 // Users object, stored in memory
+// Also contains the user's messages
 const users = {};
+let indexer= 0; //Indexer for the users object
 
 // SHA-1 is a bit of a quicker hash algorithm for insecure things
 let etag = crypto.createHash('sha1').update(JSON.stringify(users));
@@ -35,19 +37,19 @@ const respondJSONHead = (request, response, status) => {
   response.end();
 };
 
-// // getUsers GET
-// const getUsers = (request, response) => {
-//  const JSONResponse = {
-//    users,
-//  };
-//
-//  // Client etag, checks if anything has changed
-//  if (request.headers['if-none-match'] === digest) {
-//    return respondJSONHead(request, response, 304); // 304, already have file
-//  }
-//
-//  return respondJSON(request, response, 200, JSONResponse); // 200
-// };
+// getMessages GET
+const getMessages = (request, response) => {
+  const JSONResponse = {
+    users,
+  };
+
+  // Client etag, checks if anything has changed
+  if (request.headers['if-none-match'] === digest) {
+    return respondJSONHead(request, response, 304); // 304, already have file
+  }
+
+  return respondJSON(request, response, 200, JSONResponse); // 200
+};
 //
 // // getUsers HEAD
 // const getUsersHead = (request, response) => {
@@ -76,7 +78,7 @@ const getNotRealHead = (request, response) => {
 };
 
 // postMessage POST
-const getMessage = (request, response, params) => {
+const postMessage = (request, response, params) => {
   const JSONResponse = {
     username: params.name,
     message: params.message,
@@ -98,9 +100,9 @@ const getMessage = (request, response, params) => {
   //  return respondJSONHead(request, response, 204); // 204
   // }
 
-  if (!users[params.name]) {
-    users[params.name] = params.name; // Add the user, indexes by the user's name
-  }
+  users[indexer].username = params.name; // Add the user's name
+  users[indexer].message = params.message; // Add the user's message
+  indexer++; //Increment the indexer
 
   etag = crypto.createHash('sha1').update(JSON.stringify(users)); // Create a new hash object
   digest = etag.digest('hex'); // Recalculate the hash digest for the etag
@@ -109,9 +111,9 @@ const getMessage = (request, response, params) => {
 };
 
 module.exports = {
-  // getUsers,
+  getMessages,
   // getUsersHead,
   getNotReal,
   getNotRealHead,
-  getMessage,
+  postMessage,
 };

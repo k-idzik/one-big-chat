@@ -16,29 +16,29 @@
         let spacer = document.querySelector('#spacer');
         spacer.parentNode.removeChild(spacer);
         
-       /*switch(xhr.status) {
+       switch(xhr.status) {
             case 200: //200 Success
-              content.innerHTML = `<b>Success</b>`;
+              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Success</b></div>`;
               break;
             case 201: //201 Created
-              content.innerHTML = `<b>Create</b>`;
+              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Create</b></div>`;
               break;
             case 204: //204 Updated
-              content.innerHTML = `<b>Updated (No Content)</b>`;
+              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Updated (No Content)</b></div>`;
               return;
             case 304: //304 Not Modified
-              content.innerHTML = '<b>Not Modified</b>';
+              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Not Modified</b></div>`;
               break;
             case 400: //400 Bad Request
-              content.innerHTML = `<b>Bad Request</b>`;
+              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Bad Request</b></div>`;
               break;
             case 404: //404 Not Found
-              content.innerHTML = `<b>Resource Not Found</b>`;
+              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Resource Not Found</b></div>`;
               break;
             default:
-              content.innerHTML = `Error code not implemented by client.`;
+              scrollWrapper.innerHTML = `<div class="messageContainer${messageFlipper}"><b>Error code not implemented by client.</b></div>`;
               break;
-      }*/
+      }
         
       //If we are expecting a response from a GET or POST
       if (parseResponse) {
@@ -101,9 +101,26 @@
       return false; //Stop the page from redirecting from the form
     };
 
+    //Ping to update the chat with input from other users
+    const updateChat = () => {
+      const xhr = new XMLHttpRequest(); //AJAX request
+
+      xhr.open('get', '/getMessages'); //Connect using the method and url
+
+      xhr.setRequestHeader('Accept', 'application/json'); //Set the accept header
+
+      xhr.onload = () => handleResponses(xhr, true); //Parse the GET request and get the JSON message
+      
+      xhr.send(); //Send the AJAX request
+      
+      e.preventDefault(); //Cancel the browser's default action
+    
+      return false; //Stop the page from redirecting from the form
+    };
+
     const resizeScrollArea = (scrollArea) => {
         scrollArea.style.height = `${window.innerHeight - 125}px`; //Resize window
-    }
+    };
 
     const init = () => {
         //Change the height of the message area to fit within the screen height
@@ -118,6 +135,8 @@
         const postMessage = (e) => requestUpdate(e, messageForm); //Handles requests to add users
         
         messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted
+        
+        setInterval(updateChat(), 1000); //Check for other user updates
     };
 
     window.onload = init;

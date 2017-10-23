@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
     let messageFlipper = 0;
+    let messageCount = 0; //The number of messages
 
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
@@ -16,6 +17,7 @@
       let spacer = document.querySelector('#spacer');
       spacer.parentNode.removeChild(spacer);
         
+      //Error codes
       switch(xhr.status) {
         case 200: //200 Success
           //spacer.innerHTML = `<div id="spacer"><b>Success</b></div>`;
@@ -41,8 +43,23 @@
       }
 
       //If we are expecting a response from a GET or POST
-      if (parseResponse && xhr.status === 200)
+      if (parseResponse && xhr.status === 200) {
+        const count = JSON.parse(xhr.response).indexer;
+          
+        if (count > 0 && count > messageCount) {
+            for (let i = 0; i < count; i++) {
+                scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).users[i].name}</b><p>${JSON.parse(xhr.response).users[i].message}</p></div>`;
+                
+                if (messageFlipper === 0)
+                  messageFlipper = 1;
+                else
+                  messageFlipper = 0;
+            }
+        }
+        
+        messageCount = count;
         scrollWrapper.innerHTML += `<div id="spacer"></div>`;
+      }
       else if (parseResponse && xhr.status === 201) {
         const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
         scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
@@ -60,18 +77,14 @@
       let method = form.method; //Get the method type
       let url = form.action; //Get the type of action from the url
 
-      //if (form.id === 'userForm') {
-      //    //GET or HEAD
-      //    //Since this is fetching data, update with the correct information
-      //    method = document.querySelector('#methodSelect').value;
-      //    url = document.querySelector('#urlField').value;
-      //}
-      //else {
+      if (form.id === 'messageForm') {
           //POST
           //Append the information from the forms to the URL object
           url += `?name=${document.querySelector('#nameField').value}`;
           url += `&message=${document.querySelector('#messageField').value}`;
-      //}
+          
+          messageCount++; //Increment the message count
+      }
 
       const xhr = new XMLHttpRequest(); //AJAX request
 
@@ -105,8 +118,6 @@
       xhr.onload = () => handleResponses(xhr, true); //Parse the GET request and get the JSON message
       
       xhr.send(); //Send the AJAX request
-      console.log("hgere");
-      //e.preventDefault(); //Cancel the browser's default action
     
       return false; //Stop the page from redirecting from the form
     };

@@ -41,6 +41,7 @@ const respondJSONHead = (request, response, status) => {
 const getMessages = (request, response) => {
   const JSONResponse = {
     users,
+    indexer,
   };
 
   // Client etag, checks if anything has changed

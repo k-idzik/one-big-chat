@@ -47,6 +47,8 @@
         const count = JSON.parse(xhr.response).indexer;
           
         if (count > 0 && count > messageCount) {
+            scrollWrapper.innerHTML = '';
+            
             for (let i = 0; i < count; i++) {
                 scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).users[i].name}</b><p>${JSON.parse(xhr.response).users[i].message}</p></div>`;
                 

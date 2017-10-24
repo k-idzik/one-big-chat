@@ -65,8 +65,7 @@ const getMessages = (request, response) => {
 // notReal GET
 const getNotReal = (request, response) => {
   const JSONResponse = {
-    id: 'notFound',
-    message: 'Message: The page you are looking for was not found.',
+    message: 'The page you are looking for was not found.',
   };
 
   return respondJSON(request, response, 404, JSONResponse); // 404
@@ -87,11 +86,9 @@ const postMessage = (request, response, params) => {
 
   // Invalid parameters
   if (!params.name) {
-    JSONResponse.id = 'badRequest';
     JSONResponse.message = 'You must have a Username!';
     return respondJSON(request, response, 400, JSONResponse);
   } else if (!params.message) {
-    JSONResponse.id = 'badRequest';
     JSONResponse.message = 'You need to have a message to post!';
     return respondJSON(request, response, 400, JSONResponse);
   }

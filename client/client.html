@@ -16,7 +16,7 @@
         
       //Get the spacer
       let spacer = document.querySelector('#spacer');
-console.log(`${xhr.status}, ${parseResponse}`);
+console.log(`${xhr.status}, ${parseResponse}, ${previousStatus}`);
       //Error codes
       if (!parseResponse) {
         switch(xhr.status) {
@@ -29,7 +29,10 @@ console.log(`${xhr.status}, ${parseResponse}`);
             //scrollWrapper.innerHTML += `<div id="spacer"><b>Create</b></div>`;
             break;
           case 204: //204 Updated
-            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            //Remove the spacer
+            if (spacer.parentNode != null) {
+              spacer.parentNode.removeChild(spacer);
+            }
             scrollWrapper.innerHTML += `<div id="spacer"><b>Updated (No Content)</b></div>`;
             return;
           case 304: //304 Not Modified
@@ -37,15 +40,24 @@ console.log(`${xhr.status}, ${parseResponse}`);
             //scrollWrapper.innerHTML += `<div id="spacer"><b>Not Modified</b></div>`;
             break;
           case 400: //400 Bad Request
-            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            //Remove the spacer
+            if (spacer.parentNode != null) {
+              spacer.parentNode.removeChild(spacer);
+            }
             scrollWrapper.innerHTML += `<div id="spacer"><b>Bad Request</b></div>`;
             break;
           case 404: //404 Not Found
-            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            //Remove the spacer
+            if (spacer.parentNode != null) {
+              spacer.parentNode.removeChild(spacer);
+            }
             scrollWrapper.innerHTML += `<div id="spacer"><b>Resource Not Found</b></div>`;
             break;
           default:
-            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            //Remove the spacer
+            if (spacer.parentNode != null) {
+              spacer.parentNode.removeChild(spacer);
+            }
             scrollWrapper.innerHTML += `<div id="spacer"><b>Error code not implemented by client.</b></div>`;
             break;
         }
@@ -72,14 +84,20 @@ console.log(`${xhr.status}, ${parseResponse}`);
               messageCount = count;
                       
               //Remove the spacer and append it to the end
-              spacer.parentNode.removeChild(spacer);
+              if (spacer.parentNode != null) {
+                spacer.parentNode.removeChild(spacer);
+              }
               scrollWrapper.innerHTML += `<div id="spacer"></div>`;
           }
         }
         else if (xhr.status === 201) {
           //Posting a new message
           const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
-          spacer.parentNode.removeChild(spacer); //Remove the spacer
+            
+          //Remove the spacer
+          if (spacer.parentNode != null) {
+            spacer.parentNode.removeChild(spacer);
+          }
           scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
   
           if (messageFlipper === 0)
@@ -91,7 +109,10 @@ console.log(`${xhr.status}, ${parseResponse}`);
         }
         else {
           //Errors in posting mesages
-          spacer.parentNode.removeChild(spacer); //Remove the spacer
+          //Remove the spacer
+          if (spacer.parentNode != null) {
+            spacer.parentNode.removeChild(spacer);
+          }
           scrollWrapper.innerHTML += `<div id="spacer"><b>${JSON.parse(xhr.response).message}</b></div>`; //Alert errors in spacer
           spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
         }

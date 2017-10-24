@@ -98,14 +98,15 @@ const postMessage = (request, response, params) => {
 
   // Check if the username is taken
   for (let i = 0; i < usersIndexer; i++) {
-    if (users[i].name.toString() === params.cookie.toString()) {
+    if (users[i].name.toString() === params.name.toString()
+        && users[i].name.toString() !== params.cookie.toString()) {
       JSONResponse.message = 'This username is already taken. Please choose another username.';
       return respondJSON(request, response, 400, JSONResponse);
     }
   }
 
   // Create a new user
-  if (params.cookie === '') {
+  if (params.cookie.toString() === '') {
     // New user
     JSONResponse.cookie = params.name;
 

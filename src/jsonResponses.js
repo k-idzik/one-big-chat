@@ -86,7 +86,7 @@ const postMessage = (request, response, params) => {
     message: params.message,
     cookie: params.cookie,
   };
-console.log(`${params.name}, ${params.cookie}`);
+
   // Invalid parameters
   if (!params.name) {
     JSONResponse.message = 'You must have a Username!';
@@ -97,6 +97,14 @@ console.log(`${params.name}, ${params.cookie}`);
   }
 
   // Check if the username is taken
+  for (let i = 0; i < usersIndexer; i++) {
+    if (users[i].name.toString() === params.name.toString()
+        && params.cookie === '') {
+      JSONResponse.message = 'This username is already taken. Please choose another username.';
+      return respondJSON(request, response, 400, JSONResponse);
+    }
+  }
+
   if (params.cookie === '') {
     // New user
     JSONResponse.cookie = usersIndexer;
@@ -106,12 +114,10 @@ console.log(`${params.name}, ${params.cookie}`);
       name: params.name,
       cookie: usersIndexer,
     };
-      console.log(`${params.name}, ${params.cookie}, ${users[usersIndexer].name}, ${users[usersIndexer].cookie}`);
     usersIndexer++; // Increment the indexer
   } else {
     // Check all users to see if they have this name
     for (let i = 0; i < usersIndexer; i++) {
-        console.log(`${params.name}, ${params.cookie}, ${users[i].name}, ${users[i].cookie}`);
       if (users[i].name.toString() === params.name.toString()
           && users[i].cookie.toString() !== params.cookie.toString()) {
         JSONResponse.message = 'This username is already taken. Please choose another username.';

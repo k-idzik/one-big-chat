@@ -3,11 +3,13 @@ const crypto = require('crypto');
 
 // Users object, stored in memory
 // Also contains the user's messages
+const messages = {};
 const users = {};
-let indexer = 0; // Indexer for the users object
+let messageIndexer = 0; // Indexer for the messages object
+let usersIndexer = 0; // Indexer for the users object
 
 // SHA-1 is a bit of a quicker hash algorithm for insecure things
-let etag = crypto.createHash('sha1').update(JSON.stringify(users));
+let etag = crypto.createHash('sha1').update(JSON.stringify(messages));
 // Get the hash as a hex string
 let digest = etag.digest('hex');
 
@@ -40,8 +42,8 @@ const respondJSONHead = (request, response, status) => {
 // getMessages GET
 const getMessages = (request, response) => {
   const JSONResponse = {
-    users,
-    indexer,
+    messages,
+    messageIndexer,
   };
 
   // Client etag, checks if anything has changed
@@ -84,7 +86,7 @@ const postMessage = (request, response, params) => {
     message: params.message,
     cookie: params.cookie,
   };
-
+console.log(`${params.name}, ${params.cookie}`);
   // Invalid parameters
   if (!params.name) {
     JSONResponse.message = 'You must have a Username!';
@@ -96,19 +98,35 @@ const postMessage = (request, response, params) => {
 
   // Check if the username is taken
   if (params.cookie === '') {
-    JSONResponse.cookie = params.name;
-  } else if (params.name !== params.cookie) {
-    JSONResponse.message = 'This username is already taken. Please choose another username.';
-    return respondJSON(request, response, 400, JSONResponse);
+    // New user
+    JSONResponse.cookie = usersIndexer;
+
+    // Store this user's cookie
+    users[usersIndexer] = {
+      name: params.name,
+      cookie: usersIndexer,
+    };
+      console.log(`${params.name}, ${params.cookie}, ${users[usersIndexer].name}, ${users[usersIndexer].cookie}`);
+    usersIndexer++; // Increment the indexer
+  } else {
+    // Check all users to see if they have this name
+    for (let i = 0; i < usersIndexer; i++) {
+        console.log(`${params.name}, ${params.cookie}, ${users[i].name}, ${users[i].cookie}`);
+      if (users[i].name.toString() === params.name.toString()
+          && users[i].cookie.toString() !== params.cookie.toString()) {
+        JSONResponse.message = 'This username is already taken. Please choose another username.';
+        return respondJSON(request, response, 400, JSONResponse);
+      }
+    }
   }
 
-  users[indexer] = {
+  messages[messageIndexer] = {
     name: params.name, // Add the user's name
     message: params.message, // Add the user's message
   };
-  indexer++; // Increment the indexer
+  messageIndexer++; // Increment the indexer
 
-  etag = crypto.createHash('sha1').update(JSON.stringify(users)); // Create a new hash object
+  etag = crypto.createHash('sha1').update(JSON.stringify(messages)); // Create a new hash object
   digest = etag.digest('hex'); // Recalculate the hash digest for the etag
 
   return respondJSON(request, response, 201, JSONResponse); // 201

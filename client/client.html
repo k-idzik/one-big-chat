@@ -10,7 +10,7 @@
     let messageFlipper = 0; //Message striping for readability
     let messageCount = 0; //The number of messages
     let previousStatus = 200; //The previous status
-    document.cookie = ''; //The cookie to force unique usernames
+    //document.cookie = ''; //The cookie to force unique usernames
 
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
@@ -93,7 +93,7 @@
         }
         else if (xhr.status === 201) {
           //Posting a new message
-          const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
+          document.querySelector('#nameField').disabled = true; //Prevent username change
             
           //Remove the spacer
           if (spacer.parentNode != null) {
@@ -101,9 +101,9 @@
           }
           scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
 
-          if (document.cookie == '' && JSON.parse(xhr.response).cookie != '')
-              document.cookie = JSON.parse(xhr.response).cookie;
-            
+          document.cookie = `username=${JSON.parse(xhr.response).username}`; //Set the username cookie
+          document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; //Set the username cookie
+            console.log(`${getCookie("username")}, ${getCookie("cookie")}`);
           if (messageFlipper === 0)
             messageFlipper = 1;
           else
@@ -134,12 +134,12 @@
           //Append the information from the forms to the URL object
           url += `?name=${document.querySelector('#nameField').value}`;
           url += `&message=${document.querySelector('#messageField').value}`;
-          url += `&cookie=${document.cookie}`;
+          url += `&cookie=${getCookie("cookie")}`;
           
           messageCount++; //Increment the message count
           document.querySelector('#messageField').value = ''; //Clear the message field
       }
-
+console.log(`${getCookie("username")}, ${getCookie("cookie")}`);
       const xhr = new XMLHttpRequest(); //AJAX request
 
       xhr.open(method, url); //Connect using the method and url
@@ -180,6 +180,26 @@
         scrollArea.style.height = `${window.innerHeight - 125}px`; //Resize window
     };
 
+    //This code is referenced at https://www.w3schools.com/js/js_cookies.asp
+    function getCookie(cookieName) {
+        var name = cookieName + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookieJar = decodedCookie.split(';');
+        
+        for(var i = 0; i < cookieJar.length; i++) {
+            var cook = cookieJar[i];
+            
+            while (cook.charAt(0) == ' ') {
+                cook = cook.substring(1);
+            }
+            
+            if (cook.indexOf(name) == 0) {
+                return cook.substring(name.length, cook.length);
+            }
+        }
+        return "";
+    }
+
     const init = () => {
         //Change the height of the message area to fit within the screen height
         //Change value on resize
@@ -195,6 +215,12 @@
         messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted        
         
         setInterval(updateChat, 1000); //Check for other user updates
+        
+        //Set the cookie if it is fresh
+        if (getCookie("username") !== '') {
+          document.querySelector('#nameField').value = getCookie("username");
+          document.querySelector('#nameField').disabled = true;
+        }
     };
     
     window.onload = init;

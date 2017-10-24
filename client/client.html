@@ -10,13 +10,14 @@
     let messageFlipper = 0; //Message striping for readability
     let messageCount = 0; //The number of messages
     let previousStatus = 200; //The previous status
+    document.cookie = ''; //The cookie to force unique usernames
 
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
         
       //Get the spacer
       let spacer = document.querySelector('#spacer');
-console.log(`${xhr.status}, ${parseResponse}, ${previousStatus}`);
+
       //Error codes
       if (!parseResponse) {
         switch(xhr.status) {
@@ -99,7 +100,10 @@ console.log(`${xhr.status}, ${parseResponse}, ${previousStatus}`);
             spacer.parentNode.removeChild(spacer);
           }
           scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
-  
+
+          if (document.cookie == '' && JSON.parse(xhr.response).cookie != '')
+              document.cookie = JSON.parse(xhr.response).cookie;
+            
           if (messageFlipper === 0)
             messageFlipper = 1;
           else
@@ -130,6 +134,7 @@ console.log(`${xhr.status}, ${parseResponse}, ${previousStatus}`);
           //Append the information from the forms to the URL object
           url += `?name=${document.querySelector('#nameField').value}`;
           url += `&message=${document.querySelector('#messageField').value}`;
+          url += `&${document.cookie}`;
           
           messageCount++; //Increment the message count
           document.querySelector('#messageField').value = ''; //Clear the message field

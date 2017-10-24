@@ -82,6 +82,7 @@ const postMessage = (request, response, params) => {
   const JSONResponse = {
     username: params.name,
     message: params.message,
+    cookie: params.username,
   };
 
   // Invalid parameters
@@ -93,10 +94,13 @@ const postMessage = (request, response, params) => {
     return respondJSON(request, response, 400, JSONResponse);
   }
 
-  // // User already exists
-  // if (users[params.name]) {
-  //  return respondJSONHead(request, response, 204); // 204
-  // }
+  // Check if the username is taken
+  if (params.username === '') {
+    JSONResponse.cookie = params.name;
+  } else if (params.name !== params.username) {
+    JSONResponse.message = 'This username is already taken. Please choose another username.';
+    return respondJSON(request, response, 400, JSONResponse);
+  }
 
   users[indexer] = {
     name: params.name, // Add the user's name

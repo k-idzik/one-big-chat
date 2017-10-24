@@ -134,7 +134,7 @@
           //Append the information from the forms to the URL object
           url += `?name=${document.querySelector('#nameField').value}`;
           url += `&message=${document.querySelector('#messageField').value}`;
-          url += `&${document.cookie}`;
+          url += `&cookie=${document.cookie}`;
           
           messageCount++; //Increment the message count
           document.querySelector('#messageField').value = ''; //Clear the message field

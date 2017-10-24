@@ -36,9 +36,6 @@ const onRequest = (request, response) => {
   } else {
     jsonHandler.getNotReal(request, response);
   }
-  /* else if (parsedUrl.pathname === '/postMessage' && request.method === 'HEAD') {
-    jsonHandler.getUsersHead(request, response);
-  } */ 
 };
 
 http.createServer(onRequest).listen(port);

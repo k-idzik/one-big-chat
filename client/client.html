@@ -7,79 +7,97 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
-    let messageFlipper = 0;
+    let messageFlipper = 0; //Message striping for readability
     let messageCount = 0; //The number of messages
+    let previousStatus = 200; //The previous status
 
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
         
-      //Get and remove the spacer
+      //Get the spacer
       let spacer = document.querySelector('#spacer');
-      spacer.parentNode.removeChild(spacer);
-        
+console.log(`${xhr.status}, ${parseResponse}`);
       //Error codes
-      switch(xhr.status) {
-        case 200: //200 Success
-          //spacer.innerHTML = `<div id="spacer"><b>Success</b></div>`;
-          break;
-        case 201: //201 Created
-          //spacer.innerHTML = `<div id="spacer"><b>Create</b></div>`;
-          break;
-        case 204: //204 Updated
-          spacer.innerHTML = `<div id="spacer"><b>Updated (No Content)</b></div>`;
-          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
-          return;
-        case 304: //304 Not Modified
-          spacer.innerHTML = `<div id="spacer"><b>Not Modified</b></div>`;
-          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
-          break;
-        case 400: //400 Bad Request
-          spacer.innerHTML = `<div id="spacer"><b>Bad Request</b></div>`;
-          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
-          break;
-        case 404: //404 Not Found
-          spacer.innerHTML = `<div id="spacer"><b>Resource Not Found</b></div>`;
-          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
-          break;
-        default:
-          spacer.innerHTML = `<div id="spacer"><b>Error code not implemented by client.</b></div>`;
-          scrollWrapper.innerHTML += `<div id="spacer"></div>`;
-          break;
+      if (!parseResponse) {
+        switch(xhr.status) {
+          case 200: //200 Success
+            //spacer.parentNode.removeChild(spacer); //Remove the spacer
+            //scrollWrapper.innerHTML += `<div id="spacer"><b>Success</b></div>`;
+            break;
+          case 201: //201 Created
+            //spacer.parentNode.removeChild(spacer); //Remove the spacer
+            //scrollWrapper.innerHTML += `<div id="spacer"><b>Create</b></div>`;
+            break;
+          case 204: //204 Updated
+            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            scrollWrapper.innerHTML += `<div id="spacer"><b>Updated (No Content)</b></div>`;
+            return;
+          case 304: //304 Not Modified
+            //spacer.parentNode.removeChild(spacer); //Remove the spacer
+            //scrollWrapper.innerHTML += `<div id="spacer"><b>Not Modified</b></div>`;
+            break;
+          case 400: //400 Bad Request
+            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            scrollWrapper.innerHTML += `<div id="spacer"><b>Bad Request</b></div>`;
+            break;
+          case 404: //404 Not Found
+            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            scrollWrapper.innerHTML += `<div id="spacer"><b>Resource Not Found</b></div>`;
+            break;
+          default:
+            spacer.parentNode.removeChild(spacer); //Remove the spacer
+            scrollWrapper.innerHTML += `<div id="spacer"><b>Error code not implemented by client.</b></div>`;
+            break;
+        }
       }
 
       //If we are expecting a response from a GET or POST
-      if (parseResponse && xhr.status === 200) {
-        //Update if just joining chat or with messages from other users
-        const count = JSON.parse(xhr.response).indexer;
+      if (parseResponse && (previousStatus == 200 || previousStatus == 201)) {
+        if (xhr.status === 200) {
+          //Update if just joining chat or with messages from other users
+          const count = JSON.parse(xhr.response).indexer;
           
-        if (count > 0 && count > messageCount) {
-            scrollWrapper.innerHTML = '';
-            
-            for (let i = 0; i < count; i++) {
-                scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).users[i].name}</b><p>${JSON.parse(xhr.response).users[i].message}</p></div>`;
-                
-                if (messageFlipper === 0)
-                  messageFlipper = 1;
-                else
-                  messageFlipper = 0;
-            }
-            
-            messageCount = count;
-        }
-        
-        scrollWrapper.innerHTML += `<div id="spacer"></div>`;
-      }
-      else if (parseResponse && xhr.status === 201) {
-        const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
-        scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
+          if (count > 0 && count > messageCount) {
+              scrollWrapper.innerHTML = '';
 
-        if (messageFlipper === 0)
-          messageFlipper = 1;
-        else
-          messageFlipper = 0;
-          
-        spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
+              for (let i = 0; i < count; i++) {
+                  scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).users[i].name}</b><p>${JSON.parse(xhr.response).users[i].message}</p></div>`;
+                  
+                  if (messageFlipper === 0)
+                    messageFlipper = 1;
+                  else
+                    messageFlipper = 0;
+              }
+              
+              messageCount = count;
+                      
+              //Remove the spacer and append it to the end
+              spacer.parentNode.removeChild(spacer);
+              scrollWrapper.innerHTML += `<div id="spacer"></div>`;
+          }
+        }
+        else if (xhr.status === 201) {
+          //Posting a new message
+          const nameField = document.querySelector('#nameField').disabled = true; //Prevent username change
+          spacer.parentNode.removeChild(spacer); //Remove the spacer
+          scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
+  
+          if (messageFlipper === 0)
+            messageFlipper = 1;
+          else
+            messageFlipper = 0;
+            
+          spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
+        }
+        else {
+          //Errors in posting mesages
+          spacer.parentNode.removeChild(spacer); //Remove the spacer
+          scrollWrapper.innerHTML += `<div id="spacer"><b>${JSON.parse(xhr.response).message}</b></div>`; //Alert errors in spacer
+          spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
+        }
       }
+
+      previousStatus = xhr.status; //Set the previous status
     };
 
     const requestUpdate = (e, form) => {

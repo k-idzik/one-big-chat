@@ -11,22 +11,18 @@ const onRequest = (request, response) => {
 
   // GET, HEAD, and POST requests
   if (request.method === 'GET') {
-    switch (parsedUrl.pathname) {
-      case '/' || '/index.html':
-        htmlHandler.getIndex(request, response);
-        break;
-      case '/style.css':
-        htmlHandler.getCSS(request, response);
-        break;
-      case '/getMessages':
-        jsonHandler.getMessages(request, response);
-        break;
-      case '/notReal':
-        jsonHandler.getNotReal(request, response);
-        break;
-      default:
-        jsonHandler.getNotReal(request, response);
-        break;
+    if (parsedUrl.pathname === '/' || parsedUrl.pathname === '/index.html') {
+      htmlHandler.getIndex(request, response);
+    } else if (parsedUrl.pathname === '/style.css') {
+      htmlHandler.getCSS(request, response);
+    } else if (parsedUrl.pathname === '/getMessages') {
+      jsonHandler.getMessages(request, response);
+    } else if (parsedUrl.pathname === '/notReal') {
+      jsonHandler.getNotReal(request, response);
+    } else if (query.parse(parsedUrl.query).command !== undefined) {
+      jsonHandler.getInfo(request, response, query.parse(parsedUrl.query));
+    } else {
+      jsonHandler.getNotReal(request, response);
     }
   } else if (parsedUrl.pathname === '/notReal' && request.method === 'HEAD') {
     jsonHandler.getNotRealHead(request, response);

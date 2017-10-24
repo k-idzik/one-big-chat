@@ -69,7 +69,21 @@
           // Update if just joining chat or with messages from other users
           const count = JSON.parse(xhr.response).messageIndexer;
 
-          if (count > 0 && count > messageCount) {
+          // If the user is using a command as their first post, they don't create anything
+          // We still want to log them as having been here, so we're setting cookies and the like
+          if (JSON.parse(xhr.response).newUser === true) {
+            document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
+            
+            // Posting a new message
+            document.querySelector('#nameField').disabled = true; // Prevent username change
+          
+            // Adjust the name field to fit the circumstance 
+            if (document.querySelector('#nameField').disabled === true && window.outerWidth <= 615) {
+              document.querySelector('#messageField').style.width = '95%';
+            }
+          }
+            
+          if (count > messageCount) {
             scrollWrapper.innerHTML = '';
 
             for (let i = 0; i < count; i++) {
@@ -129,17 +143,32 @@
     };
 
     const requestUpdate = (e, form) => {
-      const method = form.method; // Get the method type
+      let method = form.method; // Get the method type
       let url = form.action; // Get the type of action from the url
 
       if (form.id === 'messageForm') {
         // POST
         // Append the information from the forms to the URL object
         url += `?name=${document.querySelector('#nameField').value}`;
-        url += `&message=${document.querySelector('#messageField').value}`;
+        
+        // If this is actually a GET
+        const splitString = document.querySelector('#messageField').value.toString().split(' ');
+        const firstChar = splitString[0].charAt(0);
+        if (firstChar === '/' && splitString.length > 1) {
+            // Arguments in command
+            url += `&message=${splitString[0]}&command=${splitString[1]}&numCommands=${splitString.length}`;
+            method = 'get';
+        } else if (firstChar === '/' && splitString.length === 1) {
+            // No arguments in command
+            url += `&message=${splitString[0]}&command=noParameter&numCommands=${splitString.length}`;
+            method = 'get';
+        } else {
+            // Default POST
+            url += `&message=${document.querySelector('#messageField').value}`;
+            messageCount++; // Increment the message count
+        }
         url += `&cookie=${getCookie('cookie')}`;
 
-        messageCount++; // Increment the message count
         document.querySelector('#messageField').value = ''; // Clear the message field
       }
 

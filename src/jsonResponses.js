@@ -54,6 +54,99 @@ const getMessages = (request, response) => {
   return respondJSON(request, response, 200, JSONResponse); // 200
 };
 
+// getInfo GET
+const getInfo = (request, response, params) => {
+  messages[messageIndexer] = {
+    name: 'One-Big-Chat API', // Add the user's name
+    message: 'You should never see this spooky message.', // Add the user's message
+  };
+
+  // Generic response, preparing for an error
+  const JSONResponse = {
+    message: params.message,
+    cookie: params.cookie,
+    newUser: false,
+    messages,
+    messageIndexer,
+  };
+
+  // These catch if a user is getting info without having posted a message,
+  // Invalid parameters
+  if (!params.name) {
+    JSONResponse.message = 'You must have a Username!';
+    return respondJSON(request, response, 400, JSONResponse);
+  } else if (!params.message) {
+    JSONResponse.message = 'You need to have a message to post!';
+    return respondJSON(request, response, 400, JSONResponse);
+  }
+
+  // Check if the username is taken
+  for (let i = 0; i < usersIndexer; i++) {
+    if (users[i].name.toString().toLowerCase() === params.name.toString().toLowerCase()
+        && users[i].name.toString().toLowerCase() !== params.cookie.toString().toLowerCase()) {
+      JSONResponse.message = 'This username is already taken. Please choose another username.';
+      return respondJSON(request, response, 400, JSONResponse);
+    }
+  }
+
+  // Create a new user
+  if (params.cookie.toString() === '') {
+    // New user
+    JSONResponse.cookie = params.name;
+
+    // Store this user's cookie
+    users[usersIndexer] = {
+      name: params.name,
+    };
+    usersIndexer++; // Increment the indexer
+    JSONResponse.newUser = true;
+  }
+
+  // Bad parameters
+  if (params.numCommands > 2) {
+    JSONResponse.message = 'Too many arguments in command!';
+    return respondJSON(request, response, 400, JSONResponse);
+  }
+
+  // Info commands
+  if (params.message === '/info') {
+    if (params.command === 'numUsers') {
+      messages[messageIndexer].message = usersIndexer;
+    } else if (params.command === 'getUsers') {
+      messages[messageIndexer].message = 'Users: ';
+
+      for (let i = 0; i < usersIndexer; i++) {
+        messages[messageIndexer].message += `${users[i].name}, `;
+      }
+    } else if (params.command === 'noParameter') {
+      JSONResponse.message = '/info requires a valid parameter!';
+      return respondJSON(request, response, 400, JSONResponse);
+    } else {
+      JSONResponse.message = `${params.command} is not a valid parameter!`;
+      return respondJSON(request, response, 400, JSONResponse);
+    }
+  } else if (params.message === '/help') {
+    if (params.command === 'noParameter') {
+      messages[messageIndexer].message = 'Commands:\n/info {parameter}: ';
+      messages[messageIndexer].message += 'this command takes one parameter, "numUsers" or "getUsers"';
+    }
+  } else {
+    JSONResponse.message = `${params.message} is not a command!`;
+    return respondJSON(request, response, 400, JSONResponse);
+  }
+
+  messageIndexer++; // Increment the indexer
+
+  // Update response information
+  JSONResponse.messages = messages;
+  JSONResponse.messageIndexer = messageIndexer;
+
+  etag = crypto.createHash('sha1').update(JSON.stringify(messages)); // Create a new hash object
+  digest = etag.digest('hex'); // Recalculate the hash digest for the etag
+
+  return respondJSON(request, response, 200, JSONResponse); // 200
+};
+
 // notReal GET
 const getNotReal = (request, response) => {
   const JSONResponse = {
@@ -121,6 +214,7 @@ const postMessage = (request, response, params) => {
 
 module.exports = {
   getMessages,
+  getInfo,
   getNotReal,
   getNotRealHead,
   postMessage,

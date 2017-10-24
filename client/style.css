@@ -48,6 +48,7 @@ html, body {
   display: flex;
   flex-direction: column;
   margin-top: 75px;
+  overflow-x: hidden;
   overflow-y: auto;
   position: relative;
   vertical-align: baseline;
@@ -78,6 +79,7 @@ html, body {
   padding: 15px;
   position: relative;
   width: 98%;
+  word-wrap: normal;
 }
 .messageContainer1 {
   background-color: #F5F5F5;
@@ -91,4 +93,44 @@ html, body {
   padding: 15px;
   position: relative;
   width: 98%;
+  word-wrap: normal;
+}
+
+@media screen and (max-width: 615px)
+{
+  #footer {
+    height: 30px;
+  }
+  #header {
+    height: 20px;
+  }
+  #header h1 {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  #messageField {
+    font-size: 12px;
+    transform: translateY(10%);
+    width: 70%;
+  }
+  #nameField {
+    font-size: 12px;
+    transform: translateY(10%);
+    width: 20%;
+  }
+  #scrollWrapper {
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .messageContainer0 {
+    font-size: 12px;
+    padding: 5px;
+    width: 95%;
+  }
+  .messageContainer1 {
+    font-size: 12px;
+    padding: 5px;
+    width: 95%;
+  }
 }

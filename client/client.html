@@ -176,7 +176,10 @@
     };
 
     const resizeScrollArea = (scrollArea) => {
-        scrollArea.style.height = `${window.innerHeight - 125}px`; //Resize window
+        if (window.outerWidth > 615)
+            scrollArea.style.height = `${window.innerHeight - 125}px`; //Resize window
+        else
+            scrollArea.style.height = `${window.innerHeight - 50}px`; //Resize window
     };
 
     //This code is referenced at https://www.w3schools.com/js/js_cookies.asp

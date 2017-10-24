@@ -90,7 +90,7 @@ const getInfo = (request, response, params) => {
   }
 
   // Create a new user
-  if (params.cookie.toString() === '') {
+  if (params.cookie.toString() === '' || usersIndexer === 0) {
     // New user
     JSONResponse.cookie = params.name;
 

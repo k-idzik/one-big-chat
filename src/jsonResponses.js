@@ -98,32 +98,22 @@ const postMessage = (request, response, params) => {
 
   // Check if the username is taken
   for (let i = 0; i < usersIndexer; i++) {
-    if (users[i].name.toString() === params.name.toString()
-          && users[i].cookie.toString() !== params.cookie.toString()) {
+    if (users[i].name.toString() === params.cookie.toString()) {
       JSONResponse.message = 'This username is already taken. Please choose another username.';
       return respondJSON(request, response, 400, JSONResponse);
     }
   }
 
+  // Create a new user
   if (params.cookie === '') {
     // New user
-    JSONResponse.cookie = usersIndexer;
+    JSONResponse.cookie = params.name;
 
     // Store this user's cookie
     users[usersIndexer] = {
       name: params.name,
-      cookie: usersIndexer,
     };
     usersIndexer++; // Increment the indexer
-  } else {
-    // Check all users to see if they have this name
-    for (let i = 0; i < usersIndexer; i++) {
-      if (users[i].name.toString() === params.name.toString()
-          && users[i].cookie.toString() !== params.cookie.toString()) {
-        JSONResponse.message = 'This username is already taken. Please choose another username.';
-        return respondJSON(request, response, 400, JSONResponse);
-      }
-    }
   }
 
   messages[messageIndexer] = {

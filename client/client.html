@@ -100,7 +100,6 @@
           }
           scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
 
-          document.cookie = `username=${JSON.parse(xhr.response).username}`; //Set the username cookie
           document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; //Set the username cookie
 
           if (messageFlipper === 0)
@@ -216,8 +215,8 @@
         setInterval(updateChat, 1000); //Check for other user updates
         
         //Set the cookie if it is fresh
-        if (getCookie("username") !== '') {
-          document.querySelector('#nameField').value = getCookie("username");
+        if (getCookie("cookie") !== '') {
+          document.querySelector('#nameField').value = getCookie("cookie");
           document.querySelector('#nameField').disabled = true;
         }
     };

@@ -99,7 +99,7 @@ html, body {
 @media screen and (max-width: 615px)
 {
   #footer {
-    height: 30px;
+    height: 50px;
   }
   #header {
     height: 20px;
@@ -109,12 +109,12 @@ html, body {
     margin-top: 2px;
   }
   #messageField {
-    font-size: 12px;
+    font-size: 16px;
     transform: translateY(10%);
     width: 70%;
   }
   #nameField {
-    font-size: 12px;
+    font-size: 16px;
     transform: translateY(10%);
     width: 20%;
   }

@@ -53,16 +53,6 @@ const getMessages = (request, response) => {
 
   return respondJSON(request, response, 200, JSONResponse); // 200
 };
-//
-// // getUsers HEAD
-// const getUsersHead = (request, response) => {
-//  // Client etag, checks if anything has changed
-//  if (request.headers['if-none-match'] === digest) {
-//    return respondJSONHead(request, response, 304); // 304, already have file
-//  }
-//
-//  return respondJSONHead(request, response, 200); // 200
-// };
 
 // notReal GET
 const getNotReal = (request, response) => {
@@ -131,7 +121,6 @@ const postMessage = (request, response, params) => {
 
 module.exports = {
   getMessages,
-  // getUsersHead,
   getNotReal,
   getNotRealHead,
   postMessage,

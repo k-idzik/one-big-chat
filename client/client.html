@@ -5,226 +5,227 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   <meta name="viewport" content="width=device-width, maximum-scale=1.0" /> <!--Meta-->
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
-    let messageFlipper = 0; //Message striping for readability
-    let messageCount = 0; //The number of messages
-    let previousStatus = 200; //The previous status
+    let messageFlipper = 0; // Message striping for readability
+    let messageCount = 0; // The number of messages
+    let previousStatus = 200; // The previous status
 
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
-        
-      //Get the spacer
+
+      // Get the spacer
       let spacer = document.querySelector('#spacer');
 
-      //Error codes
+      // Error codes
       if (!parseResponse) {
-        switch(xhr.status) {
-          case 200: //200 Success
-            //spacer.parentNode.removeChild(spacer); //Remove the spacer
-            //scrollWrapper.innerHTML += `<div id="spacer"><b>Success</b></div>`;
+        switch (xhr.status) {
+          case 200: // 200 Success
+            // spacer.parentNode.removeChild(spacer); //Remove the spacer
+            // scrollWrapper.innerHTML += `<div id="spacer"><b>Success</b></div>`;
             break;
-          case 201: //201 Created
-            //spacer.parentNode.removeChild(spacer); //Remove the spacer
-            //scrollWrapper.innerHTML += `<div id="spacer"><b>Create</b></div>`;
+          case 201: // 201 Created
+            // spacer.parentNode.removeChild(spacer); //Remove the spacer
+            // scrollWrapper.innerHTML += `<div id="spacer"><b>Create</b></div>`;
             break;
-          case 204: //204 Updated
-            //Remove the spacer
+          case 204: // 204 Updated
+            // Remove the spacer
             if (spacer.parentNode != null) {
               spacer.parentNode.removeChild(spacer);
             }
-            scrollWrapper.innerHTML += `<div id="spacer"><b>Updated (No Content)</b></div>`;
+            scrollWrapper.innerHTML += '<div id="spacer"><b>Updated (No Content)</b></div>';
             return;
-          case 304: //304 Not Modified
-            //spacer.parentNode.removeChild(spacer); //Remove the spacer
-            //scrollWrapper.innerHTML += `<div id="spacer"><b>Not Modified</b></div>`;
+          case 304: // 304 Not Modified
+            // spacer.parentNode.removeChild(spacer); //Remove the spacer
+            // scrollWrapper.innerHTML += `<div id="spacer"><b>Not Modified</b></div>`;
             break;
-          case 400: //400 Bad Request
-            //Remove the spacer
+          case 400: // 400 Bad Request
+            // Remove the spacer
             if (spacer.parentNode != null) {
               spacer.parentNode.removeChild(spacer);
             }
-            scrollWrapper.innerHTML += `<div id="spacer"><b>Bad Request</b></div>`;
+            scrollWrapper.innerHTML += '<div id="spacer"><b>Bad Request</b></div>';
             break;
-          case 404: //404 Not Found
-            //Remove the spacer
+          case 404: // 404 Not Found
+            // Remove the spacer
             if (spacer.parentNode != null) {
               spacer.parentNode.removeChild(spacer);
             }
-            scrollWrapper.innerHTML += `<div id="spacer"><b>Resource Not Found</b></div>`;
+            scrollWrapper.innerHTML += '<div id="spacer"><b>Resource Not Found</b></div>';
             break;
           default:
-            //Remove the spacer
+            // Remove the spacer
             if (spacer.parentNode != null) {
               spacer.parentNode.removeChild(spacer);
             }
-            scrollWrapper.innerHTML += `<div id="spacer"><b>Error code not implemented by client.</b></div>`;
+            scrollWrapper.innerHTML += '<div id="spacer"><b>Error code not implemented by client.</b></div>';
             break;
         }
       }
 
-      //If we are expecting a response from a GET or POST
+      // If we are expecting a response from a GET or POST
       if (parseResponse && (previousStatus == 200 || previousStatus == 201)) {
         if (xhr.status === 200) {
-          //Update if just joining chat or with messages from other users
+          // Update if just joining chat or with messages from other users
           const count = JSON.parse(xhr.response).messageIndexer;
-          
-          if (count > 0 && count > messageCount) {
-              scrollWrapper.innerHTML = '';
 
-              for (let i = 0; i < count; i++) {
-                  scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).messages[i].name}</b><p>${JSON.parse(xhr.response).messages[i].message}</p></div>`;
-                  
-                  if (messageFlipper === 0)
-                    messageFlipper = 1;
-                  else
-                    messageFlipper = 0;
+          if (count > 0 && count > messageCount) {
+            scrollWrapper.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+              scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).messages[i].name}</b><p>${JSON.parse(xhr.response).messages[i].message}</p></div>`;
+
+              if (messageFlipper === 0) {
+                messageFlipper = 1;
+              } else {
+                messageFlipper = 0;
               }
-              
-              messageCount = count;
-                      
-              //Remove the spacer and append it to the end
-              if (spacer.parentNode != null) {
-                spacer.parentNode.removeChild(spacer);
-              }
-              scrollWrapper.innerHTML += `<div id="spacer"></div>`;
+            }
+
+            messageCount = count;
+
+            // Remove the spacer and append it to the end
+            if (spacer.parentNode != null) {
+              spacer.parentNode.removeChild(spacer);
+            }
+            scrollWrapper.innerHTML += '<div id="spacer"></div>';
           }
-        }
-        else if (xhr.status === 201) {
-          //Posting a new message
-          document.querySelector('#nameField').disabled = true; //Prevent username change
-            
-          //Remove the spacer
+        } else if (xhr.status === 201) {
+          // Posting a new message
+          document.querySelector('#nameField').disabled = true; // Prevent username change
+
+          // Remove the spacer
           if (spacer.parentNode != null) {
             spacer.parentNode.removeChild(spacer);
           }
           scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
 
-          document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; //Set the username cookie
+          document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
 
-          if (messageFlipper === 0)
+          if (messageFlipper === 0) {
             messageFlipper = 1;
-          else
+          } else {
             messageFlipper = 0;
-            
-          spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
-        }
-        else {
-          //Errors in posting mesages
-          //Remove the spacer
+          }
+
+          spacer = document.querySelector('#spacer').scrollIntoView(); // Scroll the spacer into view
+        } else {
+          // Errors in posting mesages
+          // Remove the spacer
           if (spacer.parentNode != null) {
             spacer.parentNode.removeChild(spacer);
           }
-          scrollWrapper.innerHTML += `<div id="spacer"><b>${JSON.parse(xhr.response).message}</b></div>`; //Alert errors in spacer
-          spacer = document.querySelector('#spacer').scrollIntoView(); //Scroll the spacer into view
+          scrollWrapper.innerHTML += `<div id="spacer"><b>${JSON.parse(xhr.response).message}</b></div>`; // Alert errors in spacer
+          spacer = document.querySelector('#spacer').scrollIntoView(); // Scroll the spacer into view
         }
       }
 
-      previousStatus = xhr.status; //Set the previous status
+      previousStatus = xhr.status; // Set the previous status
     };
 
     const requestUpdate = (e, form) => {
-      let method = form.method; //Get the method type
-      let url = form.action; //Get the type of action from the url
+      const method = form.method; // Get the method type
+      let url = form.action; // Get the type of action from the url
 
       if (form.id === 'messageForm') {
-          //POST
-          //Append the information from the forms to the URL object
-          url += `?name=${document.querySelector('#nameField').value}`;
-          url += `&message=${document.querySelector('#messageField').value}`;
-          url += `&cookie=${getCookie("cookie")}`;
-          
-          messageCount++; //Increment the message count
-          document.querySelector('#messageField').value = ''; //Clear the message field
+        // POST
+        // Append the information from the forms to the URL object
+        url += `?name=${document.querySelector('#nameField').value}`;
+        url += `&message=${document.querySelector('#messageField').value}`;
+        url += `&cookie=${getCookie('cookie')}`;
+
+        messageCount++; // Increment the message count
+        document.querySelector('#messageField').value = ''; // Clear the message field
       }
 
-      const xhr = new XMLHttpRequest(); //AJAX request
+      const xhr = new XMLHttpRequest(); // AJAX request
 
-      xhr.open(method, url); //Connect using the method and url
+      xhr.open(method, url); // Connect using the method and url
 
-      xhr.setRequestHeader('Accept', 'application/json'); //Set the accept header
+      xhr.setRequestHeader('Accept', 'application/json'); // Set the accept header
 
-      //GET, HEAD and POST requests
+      // GET, HEAD and POST requests
       if (method == 'get' || method == 'post') {
-        xhr.onload = () => handleResponses(xhr, true); //Parse the GET or POST request and get the JSON message
-      } 
-      else {
-        xhr.onload = () => handleResponses(xhr, false); //HEAD request, check the metadata
+        xhr.onload = () => handleResponses(xhr, true); // Parse the GET or POST request and get the JSON message
+      } else {
+        xhr.onload = () => handleResponses(xhr, false); // HEAD request, check the metadata
       }
-      
-      xhr.send(); //Send the AJAX request
-      
-      e.preventDefault(); //Cancel the browser's default action
-    
-      return false; //Stop the page from redirecting from the form
+
+      xhr.send(); // Send the AJAX request
+
+      e.preventDefault(); // Cancel the browser's default action
+
+      return false; // Stop the page from redirecting from the form
     };
 
-    //Ping to update the chat with input from other users
+    // Ping to update the chat with input from other users
     const updateChat = () => {
-      const xhr = new XMLHttpRequest(); //AJAX request
+      const xhr = new XMLHttpRequest(); // AJAX request
 
-      xhr.open('get', '/getMessages'); //Connect using the method and url
+      xhr.open('get', '/getMessages'); // Connect using the method and url
 
-      xhr.setRequestHeader('Accept', 'application/json'); //Set the accept header
+      xhr.setRequestHeader('Accept', 'application/json'); // Set the accept header
 
-      xhr.onload = () => handleResponses(xhr, true); //Parse the GET request and get the JSON message
-      
-      xhr.send(); //Send the AJAX request
-    
-      return false; //Stop the page from redirecting from the form
+      xhr.onload = () => handleResponses(xhr, true); // Parse the GET request and get the JSON message
+
+      xhr.send(); // Send the AJAX request
+
+      return false; // Stop the page from redirecting from the form
     };
 
+    // Resize the scroll area to fit the vertical height of the window
     const resizeScrollArea = (scrollArea) => {
-        if (window.outerWidth > 615)
-            scrollArea.style.height = `${window.innerHeight - 125}px`; //Resize window
-        else
-            scrollArea.style.height = `${window.innerHeight - 50}px`; //Resize window
+      // Resize window
+      if (window.outerWidth > 615) {
+        scrollArea.style.height = `${window.innerHeight - 125}px`;
+      } else {
+        scrollArea.style.height = `${window.innerHeight - 70}px`;
+      }
     };
 
-    //This code is referenced at https://www.w3schools.com/js/js_cookies.asp
+    // This code is referenced at https://www.w3schools.com/js/js_cookies.asp
     function getCookie(cookieName) {
-        var name = cookieName + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var cookieJar = decodedCookie.split(';');
-        
-        for(var i = 0; i < cookieJar.length; i++) {
-            var cook = cookieJar[i];
-            
-            while (cook.charAt(0) == ' ') {
-                cook = cook.substring(1);
-            }
-            
-            if (cook.indexOf(name) == 0) {
-                return cook.substring(name.length, cook.length);
-            }
+      const name = `${cookieName}=`;
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const cookieJar = decodedCookie.split(';');
+
+      for (let i = 0; i < cookieJar.length; i++) {
+        let cook = cookieJar[i];
+
+        while (cook.charAt(0) == ' ') {
+          cook = cook.substring(1);
         }
-        return "";
+
+        if (cook.indexOf(name) == 0) {
+          return cook.substring(name.length, cook.length);
+        }
+      }
+      return '';
     }
 
     const init = () => {
-        //Change the height of the message area to fit within the screen height
-        //Change value on resize
-        const scrollArea = document.querySelector('#scrollWrapper');
-        resizeScrollArea(scrollArea);
-        window.onresize = () => resizeScrollArea(scrollArea);        
-        
-        //Get forms
-        const messageForm = document.querySelector('#messageForm');
-        
-        const postMessage = (e) => requestUpdate(e, messageForm); //Handles requests to add users
-        
-        messageForm.addEventListener('submit', postMessage); //Listen for when the form is submitted        
-        
-        setInterval(updateChat, 1000); //Check for other user updates
-        
-        //Set the cookie if it is fresh
-        if (getCookie("cookie") !== '') {
-          document.querySelector('#nameField').value = getCookie("cookie");
-          document.querySelector('#nameField').disabled = true;
-        }
+      // Change the height of the message area to fit within the screen height
+      // Change value on resize
+      const scrollArea = document.querySelector('#scrollWrapper');
+      resizeScrollArea(scrollArea);
+      window.onresize = () => resizeScrollArea(scrollArea);
+
+      // Get forms
+      const messageForm = document.querySelector('#messageForm');
+
+      const postMessage = e => requestUpdate(e, messageForm); // Handles requests to add users
+
+      messageForm.addEventListener('submit', postMessage); // Listen for when the form is submitted        
+
+      setInterval(updateChat, 1000); // Check for other user updates
+
+      // Set the cookie if it is fresh
+      if (getCookie('cookie') !== '') {
+        document.querySelector('#nameField').value = getCookie('cookie');
+        document.querySelector('#nameField').disabled = true;
+      }
     };
-    
+
     window.onload = init;
   </script>
 </head>

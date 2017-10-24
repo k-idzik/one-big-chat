@@ -93,7 +93,12 @@
         } else if (xhr.status === 201) {
           // Posting a new message
           document.querySelector('#nameField').disabled = true; // Prevent username change
-
+        
+          // Adjust the name field to fit the circumstance 
+          if (document.querySelector('#nameField').disabled === true && window.outerWidth <= 615) {
+            document.querySelector('#messageField').style.width = '95%';
+          }
+            
           // Remove the spacer
           if (spacer.parentNode != null) {
             spacer.parentNode.removeChild(spacer);
@@ -174,12 +179,21 @@
     };
 
     // Resize the scroll area to fit the vertical height of the window
-    const resizeScrollArea = (scrollArea) => {
+    const resizeArea = (scrollArea) => {
       // Resize window
       if (window.outerWidth > 615) {
         scrollArea.style.height = `${window.innerHeight - 125}px`;
       } else {
         scrollArea.style.height = `${window.innerHeight - 70}px`;
+      }
+        
+      // Adjust the name field to fit the circumstance 
+      if (document.querySelector('#nameField').disabled === true && window.outerWidth <= 615) {
+        document.querySelector('#messageField').style.width = '95%';
+      } else if (document.querySelector('#nameField').disabled === false && window.outerWidth <= 615) {
+        document.querySelector('#messageField').style.width = '70%';
+      } else {
+        document.querySelector('#messageField').style.width = '90%';
       }
     };
 
@@ -207,8 +221,8 @@
       // Change the height of the message area to fit within the screen height
       // Change value on resize
       const scrollArea = document.querySelector('#scrollWrapper');
-      resizeScrollArea(scrollArea);
-      window.onresize = () => resizeScrollArea(scrollArea);
+      //resizeArea(scrollArea);
+      window.onresize = () => resizeArea(scrollArea);
 
       // Get forms
       const messageForm = document.querySelector('#messageForm');
@@ -221,8 +235,14 @@
 
       // Set the cookie if it is fresh
       if (getCookie('cookie') !== '') {
-        document.querySelector('#nameField').value = getCookie('cookie');
-        document.querySelector('#nameField').disabled = true;
+        const nameField = document.querySelector('#nameField');
+        nameField.value = getCookie('cookie');
+        nameField.disabled = true;
+
+        // If the name field is not shown  
+        if (nameField.disabled === true && window.outerWidth <= 615) {
+          document.querySelector('#messageField').style.width = '95%';
+        }
       }
     };
 

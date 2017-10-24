@@ -110,14 +110,21 @@ html, body {
   }
   #messageField {
     font-size: 20px;
+    height: 35px;
+    transform: translateY(10%);
     width: 70%;
   }
   #nameField {
     font-size: 20px;
-    width: 20%;
+    height: 35px;
+    transform: translateY(10%); 
+    width: 25%;
+  }
+  #nameField:disabled {
+    display: none;
   }
   #scrollWrapper {
-    margin-top: 20px;
+    margin-top: 20px; 
     width: 100%;
   }
   

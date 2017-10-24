@@ -10,7 +10,6 @@
     let messageFlipper = 0; //Message striping for readability
     let messageCount = 0; //The number of messages
     let previousStatus = 200; //The previous status
-    //document.cookie = ''; //The cookie to force unique usernames
 
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
@@ -103,7 +102,7 @@
 
           document.cookie = `username=${JSON.parse(xhr.response).username}`; //Set the username cookie
           document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; //Set the username cookie
-            console.log(`${getCookie("username")}, ${getCookie("cookie")}`);
+
           if (messageFlipper === 0)
             messageFlipper = 1;
           else
@@ -139,7 +138,7 @@
           messageCount++; //Increment the message count
           document.querySelector('#messageField').value = ''; //Clear the message field
       }
-console.log(`${getCookie("username")}, ${getCookie("cookie")}`);
+
       const xhr = new XMLHttpRequest(); //AJAX request
 
       xhr.open(method, url); //Connect using the method and url

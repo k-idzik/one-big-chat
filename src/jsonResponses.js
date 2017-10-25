@@ -65,7 +65,7 @@ const getInfo = (request, response, params) => {
   const JSONResponse = {
     message: params.message,
     cookie: params.cookie,
-    newUser: false,
+    newUser: 0,
     messages,
     messageIndexer,
   };
@@ -108,7 +108,7 @@ const getInfo = (request, response, params) => {
       name: params.name,
     };
     usersIndexer++; // Increment the indexer
-    JSONResponse.newUser = true;
+    JSONResponse.newUser = 1;
   }
 
   // Bad parameters
@@ -121,12 +121,15 @@ const getInfo = (request, response, params) => {
   if (params.message === '/info') {
     if (params.command === 'numUsers') {
       messages[messageIndexer].message = usersIndexer;
+      JSONResponse.newUser = 2; // Returning user, force scroll
     } else if (params.command === 'getUsers') {
       messages[messageIndexer].message = 'Users: ';
 
       for (let i = 0; i < usersIndexer; i++) {
         messages[messageIndexer].message += `${users[i].name}, `;
       }
+
+      JSONResponse.newUser = 2; // Returning user, force scroll
     } else if (params.command === 'noParameter') {
       JSONResponse.message = '/info requires a valid parameter!';
       return respondJSON(request, response, 400, JSONResponse);
@@ -135,10 +138,10 @@ const getInfo = (request, response, params) => {
       return respondJSON(request, response, 400, JSONResponse);
     }
   } else if (params.message === '/help') {
-    if (params.command === 'noParameter') {
-      messages[messageIndexer].message = 'Commands:\n/info {parameter}: ';
-      messages[messageIndexer].message += 'this command takes one parameter, "numUsers" or "getUsers"';
-    }
+    // Not even going to worry about other parameters
+    messages[messageIndexer].message = 'Commands:\n/info {parameter}: ';
+    messages[messageIndexer].message += 'this command takes one parameter, "numUsers" or "getUsers"';
+    JSONResponse.newUser = 2; // Returning user, force scroll
   } else {
     JSONResponse.message = `${params.message} is not a command!`;
     return respondJSON(request, response, 400, JSONResponse);

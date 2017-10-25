@@ -10,6 +10,7 @@
     let messageFlipper = 0; // Message striping for readability
     let messageCount = 0; // The number of messages
     let previousStatus = 200; // The previous status
+    let reloaded = true; //If the page has been reloaded
 
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
@@ -89,10 +90,16 @@
               spacer.parentNode.removeChild(spacer);
             }
             scrollWrapper.innerHTML += '<div id="spacer"></div>';
+            
+            // If the page has been reloaded
+            if (reloaded) {
+              spacer = document.querySelector('#spacer').scrollIntoView(); // Scroll the spacer into view
+              reloaded = false;
+            }
               
             // If the user is using a command as their first post, they don't create anything
             // We still want to log them as having been here, so we're setting cookies and the like
-            if (JSON.parse(xhr.response).newUser === true) {
+            if (JSON.parse(xhr.response).newUser === 1) {
               document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
               
               // Posting a new message
@@ -103,6 +110,9 @@
                 document.querySelector('#messageField').style.width = '95%';
               }
                 
+              spacer = document.querySelector('#spacer').scrollIntoView(); // Scroll the spacer into view
+            } else if (JSON.parse(xhr.response).newUser === 2) {
+              // This is a response from the server, so we're going to scroll the chat anyway
               spacer = document.querySelector('#spacer').scrollIntoView(); // Scroll the spacer into view
             }
           }
@@ -128,7 +138,7 @@
           } else {
             messageFlipper = 0;
           }
-
+            
           spacer = document.querySelector('#spacer').scrollIntoView(); // Scroll the spacer into view
         } else {
           // Errors in posting mesages
@@ -252,7 +262,7 @@
       // Change the height of the message area to fit within the screen height
       // Change value on resize
       const scrollArea = document.querySelector('#scrollWrapper');
-      //resizeArea(scrollArea);
+      resizeArea(scrollArea);
       window.onresize = () => resizeArea(scrollArea);
 
       // Get forms

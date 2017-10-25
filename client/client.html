@@ -107,7 +107,7 @@
             // chat down if it was requested by this client
             if (JSON.parse(xhr.response).newUser === 1) {
               document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
-              console.log("aa");
+
               // Posting a new message
               document.querySelector('#nameField').disabled = true; // Prevent username change
             
@@ -279,7 +279,7 @@
       const postMessage = e => requestUpdate(e, messageForm); // Handles requests to add users
 
       messageForm.addEventListener('submit', postMessage); // Listen for when the form is submitted        
-
+    
       setInterval(updateChat, 1000); // Check for other user updates
 
       // Set the cookie if it is fresh

@@ -101,7 +101,7 @@
             // We still want to log them as having been here, so we're setting cookies and the like
             if (JSON.parse(xhr.response).newUser === 1) {
               document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
-              
+              console.log("aa");
               // Posting a new message
               document.querySelector('#nameField').disabled = true; // Prevent username change
             

@@ -121,7 +121,10 @@ const getInfo = (request, response, params) => {
   if (params.message === '/info') {
     if (params.command === 'numUsers') {
       messages[messageIndexer].message = usersIndexer;
-      JSONResponse.newUser = 2; // Returning user, force scroll
+
+      if (isUserReturning) {
+        JSONResponse.newUser = 2; // Returning user, force scroll
+      }
     } else if (params.command === 'getUsers') {
       messages[messageIndexer].message = 'Users: ';
 
@@ -129,7 +132,9 @@ const getInfo = (request, response, params) => {
         messages[messageIndexer].message += `${users[i].name}, `;
       }
 
-      JSONResponse.newUser = 2; // Returning user, force scroll
+      if (isUserReturning) {
+        JSONResponse.newUser = 2; // Returning user, force scroll
+      }
     } else if (params.command === 'noParameter') {
       JSONResponse.message = '/info requires a valid parameter!';
       return respondJSON(request, response, 400, JSONResponse);
@@ -141,7 +146,10 @@ const getInfo = (request, response, params) => {
     // Not even going to worry about other parameters
     messages[messageIndexer].message = 'Commands:\n/info {parameter}: ';
     messages[messageIndexer].message += 'this command takes one parameter, "numUsers" or "getUsers"';
-    JSONResponse.newUser = 2; // Returning user, force scroll
+
+    if (isUserReturning) {
+      JSONResponse.newUser = 2; // Returning user, force scroll
+    }
   } else {
     JSONResponse.message = `${params.message} is not a command!`;
     return respondJSON(request, response, 400, JSONResponse);
@@ -219,7 +227,6 @@ const postMessage = (request, response, params) => {
       name: params.name,
     };
     usersIndexer++; // Increment the indexer
-    JSONResponse.newUser = true;
   }
 
   messages[messageIndexer] = {

@@ -89,8 +89,17 @@ const getInfo = (request, response, params) => {
     }
   }
 
-  // Create a new user
-  if (params.cookie.toString() === '' || usersIndexer === 0) {
+  // Check if user has cookie from previous login, use that
+  let isUserReturning = false;
+  for (let i = 0; i < usersIndexer; i++) {
+    if (users[i].name.toString().toLowerCase() === params.cookie.toString().toLowerCase()) {
+      isUserReturning = true;
+      break;
+    }
+  }
+
+  // The user has a cookie or is a new user
+  if (!isUserReturning || params.cookie.toString() === '') {
     // New user
     JSONResponse.cookie = params.name;
 
@@ -188,8 +197,17 @@ const postMessage = (request, response, params) => {
     }
   }
 
-  // Create a new user
-  if (params.cookie.toString() === '') {
+  // Check if user has cookie from previous login, use that
+  let isUserReturning = false;
+  for (let i = 0; i < usersIndexer; i++) {
+    if (users[i].name.toString().toLowerCase() === params.cookie.toString().toLowerCase()) {
+      isUserReturning = true;
+      break;
+    }
+  }
+
+  // The user has a cookie or is a new user
+  if (!isUserReturning || params.cookie.toString() === '') {
     // New user
     JSONResponse.cookie = params.name;
 
@@ -198,6 +216,7 @@ const postMessage = (request, response, params) => {
       name: params.name,
     };
     usersIndexer++; // Increment the indexer
+    JSONResponse.newUser = true;
   }
 
   messages[messageIndexer] = {

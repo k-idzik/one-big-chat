@@ -12,6 +12,7 @@
     let previousStatus = 200; // The previous status
     let reloaded = true; //If the page has been reloaded
 
+    // Handles responses from the server
     const handleResponses = (xhr, parseResponse) => {
       const scrollWrapper = document.querySelector('#scrollWrapper');
 
@@ -65,6 +66,7 @@
       }
 
       // If we are expecting a response from a GET or POST
+      // Only updates if the previous states were 200 or 201
       if (parseResponse && (previousStatus == 200 || previousStatus == 201)) {
         if (xhr.status === 200) {
           // Update if just joining chat or with messages from other users
@@ -99,6 +101,8 @@
               
             // If the user is using a command as their first post, they don't create anything
             // We still want to log them as having been here, so we're setting cookies and the like
+            // Any message from the server will scroll the
+            // chat down if it was requested by this client
             if (JSON.parse(xhr.response).newUser === 1) {
               document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
               console.log("aa");
@@ -154,6 +158,8 @@
       previousStatus = xhr.status; // Set the previous status
     };
 
+    // Ping the server for updates
+    // Handles any posting from the message box
     const requestUpdate = (e, form) => {
       let method = form.method; // Get the method type
       let url = form.action; // Get the type of action from the url
@@ -220,6 +226,7 @@
     };
 
     // Resize the scroll area to fit the vertical height of the window
+    // Also resize the message box under different circumstances
     const resizeArea = (scrollArea) => {
       // Resize window
       if (window.outerWidth > 615) {
@@ -238,6 +245,7 @@
       }
     };
 
+    // Get information stored in cookies
     // This code is referenced at https://www.w3schools.com/js/js_cookies.asp
     function getCookie(cookieName) {
       const name = `${cookieName}=`;
@@ -258,15 +266,13 @@
       return '';
     }
 
+    // Runs once at startup, launches event listeners
     const init = () => {
-      // Change the height of the message area to fit within the screen height
-      // Change value on resize
       const scrollArea = document.querySelector('#scrollWrapper');
-      resizeArea(scrollArea);
-      window.onresize = () => resizeArea(scrollArea);
+      resizeArea(scrollArea); //This has to be called initially, otherwise the scroll bar doesn't show up
+      window.onresize = () => resizeArea(scrollArea); // Change values on resize
 
-      // Get forms
-      const messageForm = document.querySelector('#messageForm');
+      const messageForm = document.querySelector('#messageForm'); // Get the message form
 
       const postMessage = e => requestUpdate(e, messageForm); // Handles requests to add users
 

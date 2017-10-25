@@ -40,6 +40,7 @@ const respondJSONHead = (request, response, status) => {
 };
 
 // getMessages GET
+// Updates the client with messages from other users
 const getMessages = (request, response) => {
   const JSONResponse = {
     messages,
@@ -55,6 +56,10 @@ const getMessages = (request, response) => {
 };
 
 // getInfo GET
+// Handles commands, responds as the API
+// Also handles user management if this user
+// is not already registered
+// Also handle cases where users already exist
 const getInfo = (request, response, params) => {
   messages[messageIndexer] = {
     name: 'One-Big-Chat API', // Add the user's name
@@ -183,6 +188,8 @@ const getNotRealHead = (request, response) => {
 };
 
 // postMessage POST
+// Posts messages, add users if they are not registered
+// Also handle cases where users already exist
 const postMessage = (request, response, params) => {
   const JSONResponse = {
     username: params.name,

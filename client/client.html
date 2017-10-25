@@ -7,6 +7,8 @@
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
+    // Build on the structure of HTTP-Assignment-II by Cody Van De Mark
+
     let messageFlipper = 0; // Message striping for readability
     let messageCount = 0; // The number of messages
     let previousStatus = 200; // The previous status
@@ -76,7 +78,7 @@
             scrollWrapper.innerHTML = '';
 
             for (let i = 0; i < count; i++) {
-              scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).messages[i].name}:</b><p>${JSON.parse(xhr.response).messages[i].message}</p></div>`;
+              scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).messages[i].name} says:</b><p>${JSON.parse(xhr.response).messages[i].message}</p></div>`;
 
               if (messageFlipper === 0) {
                 messageFlipper = 1;
@@ -133,7 +135,7 @@
           if (spacer.parentNode != null) {
             spacer.parentNode.removeChild(spacer);
           }
-          scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}:</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
+          scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username} says:</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
 
           document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
 

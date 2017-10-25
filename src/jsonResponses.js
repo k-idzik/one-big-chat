@@ -1,3 +1,5 @@
+// Build on the structure of HTTP-Assignment-II by Cody Van De Mark
+
 // Node's built-in cryptography module.
 const crypto = require('crypto');
 

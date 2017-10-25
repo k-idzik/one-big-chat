@@ -1,3 +1,5 @@
+// Build on the structure of HTTP-Assignment-II by Cody Van De Mark
+
 const http = require('http');
 const url = require('url'); // URL parsing
 const query = require('querystring'); // Parsing queries from the URL

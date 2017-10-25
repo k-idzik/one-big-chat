@@ -1,3 +1,5 @@
+// Build on the structure of HTTP-Assignment-II by Cody Van De Mark
+
 const fs = require('fs'); // Pull in the file system module
 
 // Get the index HTML and CSS files

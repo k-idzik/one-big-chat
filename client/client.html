@@ -76,7 +76,7 @@
             scrollWrapper.innerHTML = '';
 
             for (let i = 0; i < count; i++) {
-              scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).messages[i].name}</b><p>${JSON.parse(xhr.response).messages[i].message}</p></div>`;
+              scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).messages[i].name}:</b><p>${JSON.parse(xhr.response).messages[i].message}</p></div>`;
 
               if (messageFlipper === 0) {
                 messageFlipper = 1;
@@ -133,7 +133,7 @@
           if (spacer.parentNode != null) {
             spacer.parentNode.removeChild(spacer);
           }
-          scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
+          scrollWrapper.innerHTML += `<div class="messageContainer${messageFlipper}"><b>${JSON.parse(xhr.response).username}:</b><p>${JSON.parse(xhr.response).message}</p></div><div id="spacer"></div>`;
 
           document.cookie = `cookie=${JSON.parse(xhr.response).cookie}`; // Set the username cookie
 
